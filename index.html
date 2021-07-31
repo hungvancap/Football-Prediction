@@ -1,157 +1,199 @@
 <!DOCTYPE html>
 <html>
-<head>
-<meta charset="UTF-8">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Dự đoán kết quả thi đấu bóng đá</title>
+    <style defer>
+      * {
+        text-align: center;
+        box-sizing: border-box;
+        color: white;
+        font-family: sans-serif;
+        font-size: 1.1rem;
+      }
 
-<style>
-* {
-  text-align: center;
-  box-sizing: border-box;
-	color:white;
-}
+      body {
+        background: rgb(3, 0, 51);
+        background: linear-gradient(
+          40deg,
+          rgba(3, 0, 51, 1) 0%,
+          rgba(43, 255, 167, 1) 40%,
+          rgba(0, 212, 255, 1) 100%
+        );
+      }
 
+      .grid-container {
+        padding: 50px 0px;
+        display: grid;
+        grid-template-areas: "left middle middle right";
+      }
+      .correct {
+        border-right: rgba(0, 255, 0, 0.4) solid 15px;
+      }
+      .incorrect {
+        border-right: rgba(255, 0, 0, 0.5) solid 15px;
+      }
+      .middle {
+        margin: 10px;
+        padding: 10px;
+        grid-area: middle;
+        background-color: rgba(0, 0, 0, 0.1);
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+          0 6px 20px 0 rgba(0, 0, 0, 0.19);
+      }
 
-body {
+      table {
+        padding: 10px;
+        width: 100%;
+      }
+      tr {
+        background-color: rgba(0, 0, 0, 0.4);
+      }
+      th {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      .th {
+        background-color: rgba(0, 0, 0, 0.6);
+        font-weight: bold;
+      }
+      tr:nth-child(odd) {
+        background-color: rgba(0, 0, 0, 0.5);
+      }
+      tr:hover {
+        box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2),
+          0 6px 20px 0 rgba(0, 0, 0, 0.19);
+        background-color: rgba(0, 0, 0, 0.6);
+      }
+      table,
+      th,
+      td {
+        padding: 10px;
+      }
+      /* scrollbar */
+      /* width */
+      ::-webkit-scrollbar {
+        width: 8px;
+      }
 
-background: linear-gradient(34deg, rgba(2,0,36,1) 0%, rgba(9,121,69,0.8183648459383753) 42%, rgba(0,212,255,1) 100%) no-repeat;
-}
+      /* Track */
+      ::-webkit-scrollbar-track {
+        background: black;
+        opacity: 0.1;
+      }
 
+      /* Handle */
+      ::-webkit-scrollbar-thumb {
+        background: #888;
+        border-radius: 3px;
+      }
 
-.grid-container {
-  padding: 50px 0px;
-  display: grid;
-  grid-template-areas: 
-    'left middle middle right';
-} 
+      /* Handle on hover */
+      ::-webkit-scrollbar-thumb:hover {
+        background: #555;
+      }
+    </style>
 
+    <script>
+      fetch("data_3007.json")
+        .then((response) => response.json())
+        .then((json) => getHTML(json));
 
-.middle
-{
-	margin:10px;
-	padding: 10px;
-	grid-area: middle;
-}
+      function getHTML(json) {
+        var len = Object.keys(json).length;
 
+        for (let index = 0; index < len; index++) {
+          var json_obj = JSON.stringify(json[index]);
+          var obj = JSON.parse(json_obj);
+          var table = document.getElementById("myTable");
+          var row = table.insertRow(index + 1);
+          var cell_date = row.insertCell(0);
+          var cell_tour = row.insertCell(1);
+          var cell_t1 = row.insertCell(2);
+          var cell_vs = row.insertCell(3);
+          var cell_t2 = row.insertCell(4);
+          var cell_re = row.insertCell(5);
+          var cell_pro = row.insertCell(6);
+          var cell_re_actual = row.insertCell(7);
 
-table{
-  padding: 10px;
-   width: 100%;
-
-}
-tr{
-  background-color: rgba(0, 0, 0, 0.2);
-}
-th{
-  background-color: rgba(0, 0, 0, 0.5);
-}
-tr:nth-child(even){background-color: rgba(0, 0, 0, 0.4);}
-tr:hover {
-  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
-  background-color: rgba(0, 0, 0, 0.6);
-  }
-table, th, td {
-  padding: 10px;
-}
-/* scrollbar */
-/* width */
-::-webkit-scrollbar {
-  width: 8px;
-
-
-}
-
-/* Track */
-::-webkit-scrollbar-track {
-  background: black; 
-  opacity: 0.1;
-
-}
- 
-/* Handle */
-::-webkit-scrollbar-thumb {
-  background: #888; 	border-radius: 3px;
-}
-
-/* Handle on hover */
-::-webkit-scrollbar-thumb:hover {
-  background: #555; 
-}
-
-/* Responsive layout */
-@media (max-width: 600px) {
-  .grid-container  {
-    grid-template-areas: 
-      'middle middle middle middle middle middle';
-  }
-	tr{font-size:2em;}
-}
-</style>
-
-<script >
-  fetch("data.json")
-    .then(response => response.json())
-    .then(json => getHTML(json));
-
-  function getHTML(json) {
-
-    var len=Object.keys(json).length
-
-    
-    
-    for (let index = 0; index < len; index++) {
-      var json_obj = JSON.stringify(json[index]);
-      var obj = JSON.parse(json_obj);
-      var table = document.getElementById("myTable");
-      var row = table.insertRow(index+1);
-      var cell_date = row.insertCell(0);
-      var cell_tour = row.insertCell(1);
-      var cell_t1 = row.insertCell(2);
-      var cell_vs = row.insertCell(3);
-      var cell_t2 = row.insertCell(4);
-      var cell_re = row.insertCell(5);
-      var cell_pro = row.insertCell(6);
-                  
-      cell_date.innerHTML = obj.date;
-      cell_tour.innerHTML = obj.tournament;
-      cell_t1.innerHTML = obj.team_1;
-      cell_vs.innerHTML = "VS";
-      cell_t2.innerHTML = obj.team_2;
-      if(obj.result=="win")
-      cell_re.innerHTML = obj.team_1;  
-      if (obj.result == "lose") 
-      cell_re.innerHTML = obj.team_2;     
-      if (obj.result == "draw") 
-      cell_re.innerHTML = 'Hòa';
-      cell_pro.innerHTML = obj.proba+"%";
-            
-    }
-    }
-
-
-</script>
-</head>
-<body>
-
-
-
-<div class="grid-container">
-  <div class="middle" style="background-color:rgba(0, 0, 0, 0.1); box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);">
-	  <div style="text-align:center; font-size:2em;">Dự đoán kết quả các trận đấu sắp diễn ra</div>
-	     <table id= "myTable">
-  <thead>
+          cell_date.innerHTML = obj.date;
+          cell_tour.innerHTML = obj.tournament;
+          cell_t1.innerHTML = obj.team_1;
+          cell_vs.innerHTML = "VS";
+          cell_t2.innerHTML = obj.team_2;
+          if (obj.result == "win") cell_re.innerHTML = obj.team_1;
+          if (obj.result == "lose") cell_re.innerHTML = obj.team_2;
+          if (obj.result == "draw") cell_re.innerHTML = "Hòa";
+          cell_pro.innerHTML = obj.proba + "%";
+          if (obj.result_actual == null) {
+            cell_re_actual.innerHTML = "Chưa diễn ra";
+          } else if (obj.result_actual == obj.result) {
+            cell_re_actual.innerHTML = "✔️ Đúng";
+            cell_re_actual.classList.add("correct");
+          } else if (obj.result_actual != obj.result) {
+            cell_re_actual.innerHTML = "❌ Sai";
+            cell_re_actual.classList.add("incorrect");
+          }
+        }
+        var prevTour;
+        for (let index = 3; index < len; index++) {
+          var table2 = document.getElementById("myTable");
+          if (table2.rows[index].cells[1].innerHTML != prevTour) {
+            console.log(table2.rows[index].cells[1].innerHTML);
+            var row = table2.insertRow(index);
+            var cell1 = row.insertCell(0);
+            var cell2 = row.insertCell(1);
+            var cell3 = row.insertCell(2);
+            var cell4 = row.insertCell(3);
+            var cell5 = row.insertCell(4);
+            var cell6 = row.insertCell(5);
+            var cell7 = row.insertCell(6);
+            var cell8 = row.insertCell(7);
+            cell1.innerHTML = "Ngày thi đấu";
+            cell2.innerHTML = "Tên giải  đấu";
+            cell3.innerHTML = "Đội 1";
+            cell4.innerHTML = "-";
+            cell5.innerHTML = "Đội 2";
+            cell6.innerHTML = "Đội thắng";
+            cell7.innerHTML = "Tỉ lệ";
+            cell8.innerHTML = "Kết quả";
+            cell1.classList.add("th");
+            cell2.classList.add("th");
+            cell3.classList.add("th");
+            cell4.classList.add("th");
+            cell5.classList.add("th");
+            cell6.classList.add("th");
+            cell7.classList.add("th");
+            cell8.classList.add("th");
+            prevTour = table2.rows[index + 1].cells[1].innerHTML;
+          } else {
+            prevTour = table2.rows[index].cells[1].innerHTML;
+          }
+        }
+      }
+    </script>
+  </head>
+  <body>
+    <div class="grid-container">
+      <div class="middle">
+        <div style="text-align: center; font-size: 2.5rem; margin: 10px">
+          Kết quả dự đoán
+        </div>
+        <table id="myTable">
+          <thead>
             <th>Ngày thi đấu</th>
             <th>Tên giải đấu</th>
             <th>Đội 1</th>
             <th>-</th>
-	        <th>Đội 2</th>
-	        <th >Đội thắng</th>
-        	<th >Tỉ lệ</th>
-        </thead>
-      <tbody>
-       </tbody>
-   </table>
-  </div>  
-</div>
-
-</body>
+            <th>Đội 2</th>
+            <th>Đội thắng</th>
+            <th>Tỉ lệ</th>
+            <th>Kết quả</th>
+          </thead>
+          <tbody></tbody>
+        </table>
+      </div>
+    </div>
+  </body>
 </html>
